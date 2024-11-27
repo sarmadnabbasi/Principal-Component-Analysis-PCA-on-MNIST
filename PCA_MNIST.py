@@ -111,12 +111,10 @@ print("\nSolution 1-3: Reconstruction error with different number of components\
 print(f"(a) Randomly select 5 images and plot the reconstruction with M = [2, 5, 10, 20, 50, 200] ")
 M_list = np.array([2, 5, 10, 20, 50, 200])
 
+## Data
 X_train = X[:60000]
 mean = np.mean(X_train, axis=0)  # Compute mean of each feature
 X_centered = X_train - mean  # Center the data
-
-cov_matrix = np.cov(X_centered, rowvar=False)  # Covariance matrix (784x784)
-eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)  # Eigenvalue decomposition
 
 J_M = []
 
@@ -171,6 +169,12 @@ plt.show()
 
 ###### Solution 1-4: Reconstruction error of test dataset ######
 print("\nSolution 1-4: Reconstruction error of test dataset\n")
+X_train = X[:60000]
+mean = np.mean(X_train, axis=0)  # Compute mean of each feature
+X_centered = X_train - mean  # Center the data
+
+#cov_matrix = np.cov(X_centered, rowvar=False)  # Covariance matrix (784x784)
+#eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)  # Eigenvalue decomposition
 
 y_test = y[60000:]
 X_test = X[60000:]
@@ -181,8 +185,8 @@ J_M_test = []
 
 for j in range(M_list.shape[0]):
     M = M_list[j]  # Number of components to keep
-    top_k_eigenvectors  = PCA(X_centered, M)
-
+    top_k_eigenvectors = PCA(X_centered, M)
+    x_n = X_test_centered
     z_n = x_n @ top_k_eigenvectors
     x_tilde_n = z_n @ top_k_eigenvectors.T
 
@@ -259,5 +263,3 @@ plt.legend()
 plt.grid(True)
 plt.show()
 #####################################################################################
-
-
