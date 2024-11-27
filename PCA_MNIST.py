@@ -81,7 +81,6 @@ for i in range(M):
     ax = axes[i+2]
     # Plot the contribution of each principal component: z_i * b_i
     contribution = z_n[i] * top_k_eigenvectors[:, i].reshape(28, 28)
-    print(i)
     ax.imshow(contribution, cmap='gray')
     ax.set_title(f"z_{i} * b_{i} > PC{i+1} ")
     ax.axis('off')
