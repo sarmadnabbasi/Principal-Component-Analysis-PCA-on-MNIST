@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_openml
 # for interactive plotting: https://stackoverflow.com/questions/43189394/interactive-plotting-in-pycharm-debug-console-through-matplotlib
 import matplotlib as mpl
+
 mpl.use('TkAgg')  # interactive mode works with this, pick one
+
 
 def PCA(x, M):
     cov_matrix = np.cov(x, rowvar=False)
@@ -15,13 +17,14 @@ def PCA(x, M):
     top_k_indices = sorted_indices[:M]
     # Corresponding eigenvectors
     top_k_eigenvectors = eigenvectors[:, top_k_indices]
-    
+
     return top_k_eigenvectors
+
 
 ######  Load the MNIST dataset
 print("Loading MNIST dataset...")
 mnist = fetch_openml('mnist_784', version=1)
-X = mnist.data/255  # Shape: (70000, 784)
+X = mnist.data / 255  # Shape: (70000, 784)
 y = np.array(mnist.target.astype(int))
 X = np.asarray(X)
 # Use only the first 60,000 samples for training
@@ -46,7 +49,7 @@ for i in range(M):
     eigenvector = top_k_eigenvectors[:, i]  # Get the i-th eigenvector
     eigenvector_image = eigenvector.reshape(28, 28)  # Reshape to 28x28 image
     ax.imshow(eigenvector_image, cmap='gray')  # Display as grayscale image
-    ax.set_title(f"PC_{i+1}")
+    ax.set_title(f"PC_{i + 1}")
     ax.axis('off')  # Hide axes for better visualization
 plt.tight_layout()
 fig.suptitle("Top 5 Principle Components")
@@ -66,26 +69,26 @@ print(z_n)
 x_tilde_n = top_k_eigenvectors @ z_n  # Reconstructed image
 
 # Plotting Original and reconstructed image
-fig, axes = plt.subplots(1, M+2, figsize=(15, 10))
+fig, axes = plt.subplots(1, M + 2, figsize=(15, 10))
 
 print("(b) Plot")
 # Plot original image
-axes[0].imshow((x_n+mean).reshape(28, 28), cmap='gray')
+axes[0].imshow((x_n + mean).reshape(28, 28), cmap='gray')
 axes[0].set_title("Original Image")
 axes[0].axis('off')
 
 # Plot reconstructed image
-axes[1].imshow((x_tilde_n+mean).reshape(28, 28), cmap='gray')
+axes[1].imshow((x_tilde_n + mean).reshape(28, 28), cmap='gray')
 axes[1].set_title("Reconstructed Image")
 axes[1].axis('off')
 
 # Plot the contributions of each principal component
 for i in range(M):
-    ax = axes[i+2]
+    ax = axes[i + 2]
     # Plot the contribution of each principal component: z_i * b_i
     contribution = z_n[i] * top_k_eigenvectors[:, i].reshape(28, 28)
     ax.imshow(contribution, cmap='gray')
-    ax.set_title(f"z_{i} * b_{i} > PC{i+1} ")
+    ax.set_title(f"z_{i} * b_{i} > PC{i + 1} ")
     ax.axis('off')
 
 fig.suptitle("Reconstruction using different PC components")
@@ -145,7 +148,7 @@ for j in range(M_list.shape[0]):
 
         if np.any(random_images_idx == i):
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
-             imshow((x_n[i] + mean).reshape(28, 28),cmap='gray'))
+             imshow((x_n[i] + mean).reshape(28, 28), cmap='gray'))
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
              set_title("Original Image"))
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
@@ -153,7 +156,7 @@ for j in range(M_list.shape[0]):
 
             # Plot reconstructed image
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
-             imshow((x_tilde_n[i] + mean).reshape(28, 28),cmap='gray'))
+             imshow((x_tilde_n[i] + mean).reshape(28, 28), cmap='gray'))
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
              set_title("Reconstructed Image"))
             (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
@@ -258,7 +261,7 @@ mean = np.mean(X_selected, axis=0)  # Compute the mean of each feature
 X_centered = X_selected - mean  # Center the data
 
 # Covariance Matrix -> Eigen Vectors -> Get desired Eigen Vectors
-top_2_eigenvectors  = PCA(X_centered, 2)
+top_2_eigenvectors = PCA(X_centered, 2)
 
 # Get z_n for desired eigen vectors
 Z = X_centered @ top_2_eigenvectors
