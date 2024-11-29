@@ -1,13 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_openml
+# for interactive plotting: https://stackoverflow.com/questions/43189394/interactive-plotting-in-pycharm-debug-console-through-matplotlib
+import matplotlib as mpl
+mpl.use('TkAgg')  # interactive mode works with this, pick one
 
 def PCA(x, M):
-    cov_matrix = np.cov(x, rowvar=False) #Compute the covariance matrix
-    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix) # Eigenvalue decomposition
-    sorted_indices = np.argsort(eigenvalues)[::-1]  # Indices of eigenvalues in descending order
-    top_k_indices = sorted_indices[:M]  # Select the top-M indices
-    top_k_eigenvectors = eigenvectors[:, top_k_indices]  # Corresponding eigenvectors
+    cov_matrix = np.cov(x, rowvar=False)
+    # Eigenvalue decomposition
+    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+    # Indices of eigenvalues in descending order
+    sorted_indices = np.argsort(eigenvalues)[::-1]
+    # Select the top-M indices
+    top_k_indices = sorted_indices[:M]
+    # Corresponding eigenvectors
+    top_k_eigenvectors = eigenvectors[:, top_k_indices]
     
     return top_k_eigenvectors
 
@@ -15,19 +22,16 @@ def PCA(x, M):
 print("Loading MNIST dataset...")
 mnist = fetch_openml('mnist_784', version=1)
 X = mnist.data/255  # Shape: (70000, 784)
-y = np.array(mnist.target.astype(int))  # Convert y to NumPy array and cast to integer
-
+y = np.array(mnist.target.astype(int))
 X = np.asarray(X)
 # Use only the first 60,000 samples for training
 X_train = X[:60000]
 print("Dataset loaded. Shape of training data:", X_train.shape)
-#################################
 
 ######  Data Processing
 # Center the data
 mean = np.mean(X_train, axis=0)  # Compute mean of each feature
 X_centered = X_train - mean  # Center the data
-#################################
 
 ###### Solution 1-1:  TOP 5 Principle Components ######
 print("\n###### Solution 1-1:  TOP 5 Principle Components\n")
@@ -47,7 +51,6 @@ for i in range(M):
 plt.tight_layout()
 fig.suptitle("Top 5 Principle Components")
 plt.show()
-#############################################################
 
 ###### Solution 1-2: Selecting one image and plotting values ######
 print("\n###### Solution 1-2:  Selecting one image and plotting values\n")
@@ -110,14 +113,14 @@ squared_diff = (input - target) ** 2
 mean_reconstruction_error = np.mean(squared_diff)
 
 print(f"(d) Mean reconstruction error over all training samples: {mean_reconstruction_error}")
-#######################################
 
 ###### Solution 1-3: Reconstruction error with different number of components
 print("\nSolution 1-3: Reconstruction error with different number of components\n")
-print(f"(a) Randomly select 5 images and plot the reconstruction with M = [2, 5, 10, 20, 50, 200] ")
+print(f"(a) Randomly select 5 images and plot the reconstruction with "
+      f" M = [2, 5, 10, 20, 50, 200] ")
 M_list = np.array([2, 5, 10, 20, 50, 200])
 
-## Data
+# Data
 X_train = X[:60000]
 mean = np.mean(X_train, axis=0)  # Compute mean of each feature
 X_centered = X_train - mean  # Center the data
@@ -141,22 +144,27 @@ for j in range(M_list.shape[0]):
     for i in range(X_train.shape[0]):
 
         if np.any(random_images_idx == i):
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].imshow((x_n[i] + mean).reshape(28, 28),
-                                                                            cmap='gray')
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].set_title("Original Image")
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].axis('off')
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
+             imshow((x_n[i] + mean).reshape(28, 28),cmap='gray'))
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
+             set_title("Original Image"))
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2].
+             axis('off'))
 
             # Plot reconstructed image
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].imshow((x_tilde_n[i] + mean).reshape(28, 28),
-                                                                                cmap='gray')
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].set_title("Reconstructed Image")
-            axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].axis('off')
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
+             imshow((x_tilde_n[i] + mean).reshape(28, 28),cmap='gray'))
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
+             set_title("Reconstructed Image"))
+            (axes[j, int(np.where(random_images_idx == i)[1][0]) * 2 + 1].
+             axis('off'))
 
     input = x_n
     target = x_tilde_n
     squared_diff = (input - target) ** 2
     mean_reconstruction_error = np.mean(squared_diff)
-    print(f"Mean reconstruction error for M = {M} is : {mean_reconstruction_error}")
+    print(f"Mean reconstruction error for M = {M} is :"
+          f" {mean_reconstruction_error}")
     J_M.append(mean_reconstruction_error)
 
 plt.tight_layout()
@@ -173,7 +181,7 @@ tick_positions = np.arange(J_M_array.shape[0])
 tick_labels = ["2", "5", "10", "20", "50", "200"]
 plt.xticks(tick_positions, tick_labels)
 plt.show()
-##########################################################################
+
 ###### Solution 1-4: Reconstruction error of test dataset ######
 print("\nSolution 1-4: Reconstruction error of test dataset\n")
 X_train = X[:60000]
@@ -200,7 +208,8 @@ for j in range(M_list.shape[0]):
     target = x_tilde_n
     squared_diff = (input - target) ** 2
     mean_reconstruction_error = np.mean(squared_diff)
-    print(f"Mean reconstruction error for M = {M} is : {mean_reconstruction_error}")
+    print(f"Mean reconstruction error for M = {M} is :"
+          f" {mean_reconstruction_error}")
 
     J_M_test.append(mean_reconstruction_error)
 
@@ -227,8 +236,6 @@ tick_labels = ["2", "5", "10", "20", "50", "200"]
 plt.xticks(tick_positions, tick_labels)
 plt.legend()
 plt.show()
-#################################################################################
-
 
 ###### Solution 1-5 2D Visualization ######
 
@@ -239,7 +246,9 @@ samples_per_class = 100
 indices = []
 for digit in classes:
     digit_idxs = np.where(y == digit)[0]
-    sampled_indices = np.random.choice(digit_idxs, samples_per_class, replace=False)
+    sampled_indices = np.random.choice(digit_idxs,
+                                       samples_per_class,
+                                       replace=False)
     indices.extend(sampled_indices)
 
 X_selected = X[indices]
@@ -248,14 +257,14 @@ y_selected = y[indices]
 mean = np.mean(X_selected, axis=0)  # Compute the mean of each feature
 X_centered = X_selected - mean  # Center the data
 
-## Covariance Matrix -> Eigen Vectors -> Get desired Eigen Vectors
+# Covariance Matrix -> Eigen Vectors -> Get desired Eigen Vectors
 top_2_eigenvectors  = PCA(X_centered, 2)
 
-## Get z_n for desired eigen vectors
+# Get z_n for desired eigen vectors
 Z = X_centered @ top_2_eigenvectors
 print("Data projected onto 2D space.")
 
-## Plot
+# Plot
 plt.figure(figsize=(10, 8))
 
 colors = ['blue', 'brown', 'darkturquoise']
@@ -263,7 +272,8 @@ labels = ['Digit 0', 'Digit 1', 'Digit 9']
 
 for i, digit in enumerate(classes):
     class_indices = np.where(y_selected == digit)[0]
-    plt.scatter(Z[class_indices, 0], Z[class_indices, 1], label=labels[i], color=colors[i], alpha=0.6)
+    plt.scatter(Z[class_indices, 0], Z[class_indices, 1],
+                label=labels[i], color=colors[i], alpha=0.6)
 
 plt.title("2D Visualization of MNIST using PCA", fontsize=20)
 plt.xlabel("Principal Component 1", fontsize=10)
@@ -271,4 +281,3 @@ plt.ylabel("Principal Component 2", fontsize=10)
 plt.legend()
 plt.grid(True)
 plt.show()
-#####################################################################################
